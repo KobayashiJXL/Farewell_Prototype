@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>希望重逢</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Noto Serif SC", serif;
+      background-color: #faf9f7;
+      color: #444;
+      text-align: center;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      margin-top: 60px;
+      font-size: 2.2em;
+      color: #a35c7a;
+      letter-spacing: 2px;
+    }
+
+    p {
+      font-size: 1.2em;
+      color: #555;
+      margin-bottom: 40px;
+    }
+
+    .gallery {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      padding-bottom: 60px;
+    }
+
+    .gallery img {
+      width: 80%;
+      max-width: 400px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .gallery img:hover {
+      transform: scale(1.03);
+    }
+
+    /* 音乐按钮样式 */
+    #music-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: #fff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.3s ease;
+      z-index: 100;
+    }
+
+    #music-btn.playing {
+      animation: spin 3s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    #music-btn::before {
+      content: "🎵";
+      font-size: 24px;
+    }
+
+    /* 淡入动画 */
+    .fade-in {
+      animation: fadeIn 2.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body class="fade-in">
+  <h1>希望重逢</h1>
+  <p>我爱你们</p>
+
+  <div class="gallery">
+    <img src="images/photo1.jpg" alt="回忆照片">
+  </div>
+
+  <!-- 音乐按钮 -->
+  <div id="music-btn"></div>
+
+  <!-- 背景音乐 -->
+  <audio id="bgm" loop>
+    <source src="osg_CHS_043.mp3" type="audio/mp3">
+    您的浏览器不支持音频播放
+  </audio>
+
+  <script>
+    const btn = document.getElementById('music-btn');
+    const bgm = document.getElementById('bgm');
+
+    btn.addEventListener('click', () => {
+      if (bgm.paused) {
+        bgm.play();
+        btn.classList.add('playing');
+      } else {
+        bgm.pause();
+        btn.classList.remove('playing');
+      }
+    });
+  </script>
+</body>
+</html>
