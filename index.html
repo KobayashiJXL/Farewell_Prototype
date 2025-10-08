@@ -35,14 +35,25 @@
       padding-bottom: 60px;
     }
 
-    .gallery img {
-      width: 80%;
-      max-width: 400px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-      cursor: pointer;
-      transition: transform 0.3s ease;
-    }
+  .gallery {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 40px 0;
+}
+
+/* 新的图片容器，保持比例并居中 */
+#slideshow {
+  width: 90vw;              /* 宽度占视口90% */
+  max-width: 800px;         /* 最大宽度（防止太大） */
+  height: 60vh;             /* 高度占视口60% */
+  object-fit: contain;      /* ✅ 保证整张图片完整显示 */
+  border-radius: 12px;
+  background-color: #fdfdfd; /* 背景柔和填充 */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  transition: opacity 0.5s ease;
+}
 
     .gallery img:hover {
       transform: scale(1.03);
@@ -135,6 +146,9 @@
     transform: scale(1.1);
   }
 </style>
+// 折跃：photo
+
+
 
 <script>
   const images = ["photo1.jpg", "photo2.jpg", "photo3.jpg"]; // 👈 这里列出所有图片文件名
