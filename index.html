@@ -25,7 +25,7 @@
       justify-content:center;
       align-items:center;
       z-index:100;
-      transition: opacity 1s ease;
+      perspective: 1000px; /* 为翻转提供透视 */
     }
 
     /* 信纸容器 */
@@ -34,13 +34,15 @@
       max-width: 700px;
       padding: 40px;
       background-color: #fffbea;
-      border: 2px solid #d2b48c;  /* 信纸边框 */
+      border: 2px solid #d2b48c;  
       border-radius: 12px;
       box-shadow: 0 6px 20px rgba(0,0,0,0.2);
       display: flex;
       flex-direction: column;
       gap: 20px;
       position: relative;
+      transform-origin: left center;
+      transition: transform 1s ease, opacity 1s ease;
     }
 
     /* 信纸左上角照片 */
@@ -95,7 +97,7 @@
       width: 90vw;
       max-width: 800px;
       height: 60vh;
-      object-fit: contain;  /* 保证整张图片完整显示 */
+      object-fit: contain;  
       border-radius: 12px;
       background-color: #fdfdfd;
       box-shadow: 0 4px 10px rgba(0,0,0,0.15);
@@ -153,11 +155,12 @@
   <script>
     const startBtn = document.getElementById('start-btn');
     const cover = document.getElementById('cover');
+    const letter = document.getElementById('letter');
     const album = document.getElementById('album');
     const bgm = document.getElementById('bgm');
 
     // 轮播图片数组
-    const images = ["photo1.jpg", "photo2.jpg", "photo3.jpg"]; // 根据你的图片数量修改
+    const images = ["photo1.jpg", "photo2.jpg", "photo3.jpg"]; 
     let current = 0;
     const imgEl = document.getElementById('slideshow');
     const prevBtn = document.getElementById('prev-btn');
@@ -180,15 +183,23 @@
       showImage(current);
     });
 
+    // 自动轮播
+    let autoSlide = setInterval(()=>{
+      current = (current+1)%images.length;
+      showImage(current);
+    }, 5000); // 每5秒切换
+
     // 点击“回忆”按钮
     startBtn.addEventListener('click', ()=>{
       bgm.play();
-      cover.style.opacity = 0;
+      // 封面翻书动画
+      letter.style.transform = "rotateY(-90deg)";
+      letter.style.opacity = 0;
       setTimeout(()=>{
         cover.style.display = "none";
         album.style.display = "block";
         showImage(current);
-      }, 1000); // 封面淡出1秒后显示相册
+      }, 1000); // 动画结束后显示相册
     });
   </script>
 
