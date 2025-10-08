@@ -95,7 +95,73 @@
   <h1>希望重逢</h1>
   <p>我爱你们</p>
 
-<img src="photo1.jpg" alt="回忆照片">
+<div class="gallery">
+  <button class="nav-btn" id="prev-btn">←</button>
+  <img id="slideshow" src="photo1.jpg" alt="回忆照片">
+  <button class="nav-btn" id="next-btn">→</button>
+</div>
+
+<style>
+  .gallery {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 40px 0;
+  }
+
+  .gallery img {
+    width: 80%;
+    max-width: 500px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    transition: opacity 0.5s ease;
+  }
+
+  .nav-btn {
+    background-color: #fff;
+    border: none;
+    font-size: 2em;
+    color: #a35c7a;
+    cursor: pointer;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+
+  .nav-btn:hover {
+    background-color: #f8e8ed;
+    transform: scale(1.1);
+  }
+</style>
+
+<script>
+  const images = ["photo1.jpg", "photo2.jpg", "photo3.jpg"]; // 👈 这里列出所有图片文件名
+  let current = 0;
+
+  const imgEl = document.getElementById('slideshow');
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+
+  function showImage(index) {
+    imgEl.style.opacity = 0;
+    setTimeout(() => {
+      imgEl.src = images[index];
+      imgEl.style.opacity = 1;
+    }, 300);
+  }
+
+  prevBtn.addEventListener('click', () => {
+    current = (current - 1 + images.length) % images.length;
+    showImage(current);
+  });
+
+  nextBtn.addEventListener('click', () => {
+    current = (current + 1) % images.length;
+    showImage(current);
+  });
+</script>
 
   <!-- 音乐按钮 -->
   <div id="music-btn"></div>
