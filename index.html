@@ -14,7 +14,7 @@
       overflow-x: hidden;
     }
 
-    /* 封面 */
+    /* 封面全屏 */
     #cover {
       position: fixed;
       top:0; left:0;
@@ -22,39 +22,57 @@
       height:100vh;
       background-color:#faf9f7;
       display:flex;
-      flex-direction:column;
       justify-content:center;
       align-items:center;
-      text-align:center;
       z-index:100;
       transition: opacity 1s ease;
     }
 
+    /* 信纸容器 */
+    #letter {
+      width: 80%;
+      max-width: 700px;
+      padding: 40px;
+      background-color: #fffbea;
+      border: 2px solid #d2b48c;  /* 信纸边框 */
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      position: relative;
+    }
+
+    /* 信纸左上角照片 */
     #cover-img {
-      width:80%;
-      max-width:500px;
-      border-radius:12px;
-      box-shadow:0 4px 10px rgba(0,0,0,0.2);
+      width: 16.66%; /* 六分之一大小 */
+      max-width: 120px;
+      border-radius: 8px;
+      border: 1px solid #d2b48c;
+      margin-bottom: 10px;
     }
 
-    #cover-text {
-      margin-top:20px;
-      font-size:1.3em;
-      color:#555;
+    /* 信纸文字 */
+    #letter-text {
+      font-size: 1.2em;
+      line-height: 1.6;
+      color: #444;
+      text-align: left;
     }
 
+    /* 回忆按钮 */
     #start-btn {
-      margin-top:30px;
-      font-size:1.2em;
-      padding:10px 20px;
+      align-self: flex-start;
+      margin-top: 20px;
+      font-size: 1.1em;
+      padding: 8px 16px;
       border:none;
-      border-radius:8px;
+      border-radius:6px;
       cursor:pointer;
       background-color:#a35c7a;
       color:white;
       transition: background-color 0.3s ease;
     }
-
     #start-btn:hover {
       background-color:#c16b91;
     }
@@ -106,9 +124,16 @@
 
   <!-- 封面 -->
   <div id="cover">
-    <img src="cover.jpg" alt="封面照片" id="cover-img">
-    <p id="cover-text">欢迎回忆美好时光，一起看看我们的故事。</p>
-    <button id="start-btn">回忆</button>
+    <div id="letter">
+      <img src="cover.jpg" alt="封面照片" id="cover-img">
+      <div id="letter-text">
+        <p>亲爱的朋友们：</p>
+        <p>感谢你们一路的陪伴和支持。</p>
+        <p>让我们一起回忆那些美好的时光。</p>
+        <p>点击下面的“回忆”按钮，音乐将响起，相册也会翻开。</p>
+      </div>
+      <button id="start-btn">回忆</button>
+    </div>
   </div>
 
   <!-- 相册 -->
