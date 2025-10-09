@@ -1,207 +1,105 @@
-<!DOCTYPE html>
-<html lang="zh">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>希望重逢</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: "Noto Serif SC", serif;
-      background-color: #faf9f7;
-      color: #444;
-      text-align: center;
-      overflow-x: hidden;
+<script>
+  // 自动加载 1.jpg ~ 60.jpg（如你放在 images/ 文件夹，请改成 `images/${i+1}.jpg`）
+  const images = Array.from({length: 60}, (_, i) => `${i+1}.jpg`);
+
+  // 配置选项
+  const AUTO_SLIDE_INTERVAL = 5000; // 自动切换间隔（毫秒），0 = 不自动切换
+  const PRELOAD_AHEAD = 1; // 预加载后面的几张图片（建议 1~3）
+
+  // 元素引用
+  const imgEl = document.getElementById('slideshow');
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+
+  let current = 0;
+  let autoSlideTimer = null;
+  let isHovering = false;
+
+  // 切换图片（带淡入）
+  function showImage(index) {
+    if (!imgEl) return;
+    index = (index + images.length) % images.length;
+    current = index;
+
+    imgEl.style.opacity = 0;
+    setTimeout(() => {
+      imgEl.src = images[current];
+      imgEl.style.opacity = 1;
+      preloadImages(current, PRELOAD_AHEAD);
+    }, 200);
+  }
+
+  // 预加载下一张
+  function preloadImages(startIndex, n) {
+    for (let i = 1; i <= n; i++) {
+      const idx = (startIndex + i) % images.length;
+      const img = new Image();
+      img.src = images[idx];
     }
+  }
 
-    /* 封面全屏 */
-    #cover {
-      position: fixed;
-      top:0; left:0;
-      width:100vw;
-      height:100vh;
-      background-color:#faf9f7;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      z-index:100;
-      perspective: 1000px; /* 为翻转提供透视 */
+  // 上一张 / 下一张
+  function prevImage() {
+    showImage((current - 1 + images.length) % images.length);
+  }
+  function nextImage() {
+    showImage((current + 1) % images.length);
+  }
+
+  // 按钮绑定
+  if (prevBtn) prevBtn.addEventListener('click', () => {
+    stopAutoSlideTemporary();
+    prevImage();
+  });
+  if (nextBtn) nextBtn.addEventListener('click', () => {
+    stopAutoSlideTemporary();
+    nextImage();
+  });
+
+  // 自动轮播
+  function startAutoSlide() {
+    if (AUTO_SLIDE_INTERVAL > 0) {
+      stopAutoSlide();
+      autoSlideTimer = setInterval(() => {
+        if (!isHovering) nextImage();
+      }, AUTO_SLIDE_INTERVAL);
     }
+  }
 
-    /* 信纸容器 */
-    #letter {
-      width: 80%;
-      max-width: 700px;
-      padding: 40px;
-      background-color: #fffbea;
-      border: 2px solid #d2b48c;  
-      border-radius: 12px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      position: relative;
-      transform-origin: left center;
-      transition: transform 1s ease, opacity 1s ease;
+  function stopAutoSlide() {
+    if (autoSlideTimer) {
+      clearInterval(autoSlideTimer);
+      autoSlideTimer = null;
     }
+  }
 
-    /* 信纸左上角照片 */
-    #cover-img {
-      width: 16.66%; /* 六分之一大小 */
-      max-width: 120px;
-      border-radius: 8px;
-      border: 1px solid #d2b48c;
-      margin-bottom: 10px;
+  function stopAutoSlideTemporary() {
+    stopAutoSlide();
+    setTimeout(startAutoSlide, 8000); // 点击按钮后8秒再恢复自动播放
+  }
+
+  // 鼠标悬停暂停（电脑端）
+  if (imgEl) {
+    imgEl.addEventListener('mouseenter', () => { isHovering = true; });
+    imgEl.addEventListener('mouseleave', () => { isHovering = false; });
+    imgEl.addEventListener('touchstart', () => { isHovering = true; stopAutoSlideTemporary(); });
+    imgEl.addEventListener('touchend', () => { isHovering = false; });
+  }
+
+  // 页面加载时初始化
+  document.addEventListener('DOMContentLoaded', () => {
+    showImage(0);
+    startAutoSlide();
+  });
+
+  // 键盘左右键支持
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') {
+      stopAutoSlideTemporary();
+      prevImage();
+    } else if (e.key === 'ArrowRight') {
+      stopAutoSlideTemporary();
+      nextImage();
     }
-
-    /* 信纸文字 */
-    #letter-text {
-      font-size: 1.2em;
-      line-height: 1.6;
-      color: #444;
-      text-align: left;
-    }
-
-    /* 回忆按钮 */
-    #start-btn {
-      align-self: flex-start;
-      margin-top: 20px;
-      font-size: 1.1em;
-      padding: 8px 16px;
-      border:none;
-      border-radius:6px;
-      cursor:pointer;
-      background-color:#a35c7a;
-      color:white;
-      transition: background-color 0.3s ease;
-    }
-    #start-btn:hover {
-      background-color:#c16b91;
-    }
-
-    /* 相册 */
-    #album {
-      display: none;
-      padding-top: 60px;
-    }
-
-    .gallery {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 20px;
-      padding: 40px 0;
-    }
-
-    #slideshow {
-      width: 90vw;
-      max-width: 800px;
-      height: 60vh;
-      object-fit: contain;  
-      border-radius: 12px;
-      background-color: #fdfdfd;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-      transition: opacity 0.5s ease;
-    }
-
-    .nav-btn {
-      background-color: #fff;
-      border: none;
-      font-size: 2em;
-      color: #a35c7a;
-      cursor: pointer;
-      padding: 10px 20px;
-      border-radius: 8px;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-      transition: background-color 0.3s ease, transform 0.2s ease;
-    }
-
-    .nav-btn:hover {
-      background-color: #f8e8ed;
-      transform: scale(1.1);
-    }
-  </style>
-</head>
-<body>
-
-  <!-- 封面 -->
-  <div id="cover">
-    <div id="letter">
-      <img src="cover.jpg" alt="封面照片" id="cover-img">
-      <div id="letter-text">
-        <p>亲爱的朋友们：</p>
-        <p>感谢你们一路的陪伴和支持。</p>
-        <p>让我们一起回忆那些美好的时光。</p>
-        <p>点击下面的“回忆”按钮，音乐将响起，相册也会翻开。</p>
-      </div>
-      <button id="start-btn">回忆</button>
-    </div>
-  </div>
-
-  <!-- 相册 -->
-  <div id="album">
-    <div class="gallery">
-      <button class="nav-btn" id="prev-btn">←</button>
-      <img id="slideshow" src="photo1.jpg" alt="回忆照片">
-      <button class="nav-btn" id="next-btn">→</button>
-    </div>
-  </div>
-
-  <!-- 背景音乐 -->
-  <audio id="bgm" loop preload="auto">
-    <source src="365.mp3" type="audio/mp3">
-  </audio>
-
-  <script>
-    const startBtn = document.getElementById('start-btn');
-    const cover = document.getElementById('cover');
-    const letter = document.getElementById('letter');
-    const album = document.getElementById('album');
-    const bgm = document.getElementById('bgm');
-
-    // 轮播图片数组
-    const images = ["photo1.jpg", "photo2.jpg", "photo3.jpg"]; 
-    let current = 0;
-    const imgEl = document.getElementById('slideshow');
-    const prevBtn = document.getElementById('prev-btn');
-    const nextBtn = document.getElementById('next-btn');
-
-    function showImage(index){
-      imgEl.style.opacity = 0;
-      setTimeout(()=>{
-        imgEl.src = images[index];
-        imgEl.style.opacity = 1;
-      },300);
-    }
-
-    prevBtn.addEventListener('click', ()=>{
-      current = (current-1+images.length)%images.length;
-      showImage(current);
-    });
-    nextBtn.addEventListener('click', ()=>{
-      current = (current+1)%images.length;
-      showImage(current);
-    });
-
-    // 自动轮播
-    let autoSlide = setInterval(()=>{
-      current = (current+1)%images.length;
-      showImage(current);
-    }, 15000); // 每5秒切换
-
-    // 点击“回忆”按钮
-    startBtn.addEventListener('click', ()=>{
-      bgm.play();
-      // 封面翻书动画
-      letter.style.transform = "rotateY(-90deg)";
-      letter.style.opacity = 0;
-      setTimeout(()=>{
-        cover.style.display = "none";
-        album.style.display = "block";
-        showImage(current);
-      }, 1000); // 动画结束后显示相册
-    });
-  </script>
-
-</body>
-</html>
+  });
+</script>
