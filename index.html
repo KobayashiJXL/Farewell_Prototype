@@ -1,105 +1,238 @@
-<script>
-  // 自动加载 1.jpg ~ 60.jpg（如你放在 images/ 文件夹，请改成 `images/${i+1}.jpg`）
-  const images = Array.from({length: 60}, (_, i) => `${i+1}.jpg`);
-
-  // 配置选项
-  const AUTO_SLIDE_INTERVAL = 5000; // 自动切换间隔（毫秒），0 = 不自动切换
-  const PRELOAD_AHEAD = 1; // 预加载后面的几张图片（建议 1~3）
-
-  // 元素引用
-  const imgEl = document.getElementById('slideshow');
-  const prevBtn = document.getElementById('prev-btn');
-  const nextBtn = document.getElementById('next-btn');
-
-  let current = 0;
-  let autoSlideTimer = null;
-  let isHovering = false;
-
-  // 切换图片（带淡入）
-  function showImage(index) {
-    if (!imgEl) return;
-    index = (index + images.length) % images.length;
-    current = index;
-
-    imgEl.style.opacity = 0;
-    setTimeout(() => {
-      imgEl.src = images[current];
-      imgEl.style.opacity = 1;
-      preloadImages(current, PRELOAD_AHEAD);
-    }, 200);
-  }
-
-  // 预加载下一张
-  function preloadImages(startIndex, n) {
-    for (let i = 1; i <= n; i++) {
-      const idx = (startIndex + i) % images.length;
-      const img = new Image();
-      img.src = images[idx];
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>希望重逢</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Noto Serif SC", serif;
+      background-color: #fdfaf6;
+      color: #444;
+      text-align: center;
+      overflow: hidden;
     }
-  }
 
-  // 上一张 / 下一张
-  function prevImage() {
-    showImage((current - 1 + images.length) % images.length);
-  }
-  function nextImage() {
-    showImage((current + 1) % images.length);
-  }
+    /* === 封面信纸 === */
+    #cover {
+      position: fixed;
+      inset: 0;
+      background-color: #fdfaf6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 6px solid #e5d1b8;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      z-index: 10;
+    }
 
-  // 按钮绑定
-  if (prevBtn) prevBtn.addEventListener('click', () => {
-    stopAutoSlideTemporary();
-    prevImage();
-  });
-  if (nextBtn) nextBtn.addEventListener('click', () => {
-    stopAutoSlideTemporary();
-    nextImage();
-  });
+    #cover img {
+      width: 16%;
+      max-width: 200px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+    }
 
-  // 自动轮播
-  function startAutoSlide() {
-    if (AUTO_SLIDE_INTERVAL > 0) {
+    #cover p {
+      max-width: 480px;
+      line-height: 1.8;
+      font-size: 1.1em;
+      margin: 0 20px 30px 20px;
+    }
+
+    #start-btn {
+      background-color: #a35c7a;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 22px;
+      font-size: 1.1em;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #start-btn:hover {
+      background-color: #874a66;
+    }
+
+    /* === 相册 === */
+    #slideshow-container {
+      display: none;
+      height: 100vh;
+      width: 100vw;
+      position: relative;
+      overflow: hidden;
+      background-color: black;
+    }
+
+    #slideshow {
+      max-height: 100vh;
+      max-width: 100vw;
+      object-fit: contain;
+      transition: opacity 0.8s ease;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    #prev-btn, #next-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.3);
+      border: none;
+      font-size: 2em;
+      cursor: pointer;
+      padding: 6px 14px;
+      border-radius: 8px;
+      user-select: none;
+      transition: background 0.3s;
+    }
+
+    #prev-btn:hover, #next-btn:hover {
+      background: rgba(255,255,255,0.6);
+    }
+
+    #prev-btn { left: 20px; }
+    #next-btn { right: 20px; }
+
+    /* === 音乐按钮 === */
+    #music-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: #fff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.3s ease;
+      z-index: 20;
+    }
+
+    #music-btn.playing {
+      animation: spin 3s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    #music-btn::before {
+      content: "🎵";
+      font-size: 24px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- === 封面 === -->
+  <div id="cover">
+    <img src="cover.jpg" alt="封面照片">
+    <p>
+      有些告别不必悲伤，因为每一段相遇，都会留下温柔的痕迹。<br>
+      愿你我都能在各自的路上，继续闪光。<br><br>
+      <b>点击下方按钮，一起回忆那些美好的瞬间。</b>
+    </p>
+    <button id="start-btn">回忆</button>
+  </div>
+
+  <!-- === 相册 === -->
+  <div id="slideshow-container">
+    <img id="slideshow" src="1.jpg" alt="相册照片">
+    <button id="prev-btn">❮</button>
+    <button id="next-btn">❯</button>
+  </div>
+
+  <!-- === 音乐按钮 === -->
+  <div id="music-btn"></div>
+
+  <!-- === 音乐文件 === -->
+  <audio id="bgm" loop>
+    <source src="365.mp3" type="audio/mp3">
+    您的浏览器不支持音频播放。
+  </audio>
+
+  <script>
+    const cover = document.getElementById('cover');
+    const startBtn = document.getElementById('start-btn');
+    const slideshowContainer = document.getElementById('slideshow-container');
+    const musicBtn = document.getElementById('music-btn');
+    const bgm = document.getElementById('bgm');
+    const imgEl = document.getElementById('slideshow');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+
+    let current = 0;
+    const images = Array.from({length: 59}, (_, i) => `${i+1}.jpg`);
+    const AUTO_SLIDE_INTERVAL = 5000;
+    let autoSlideTimer = null;
+
+    function showImage(index) {
+      index = (index + images.length) % images.length;
+      current = index;
+      imgEl.style.opacity = 0;
+      setTimeout(() => {
+        imgEl.src = images[current];
+        imgEl.style.opacity = 1;
+      }, 200);
+    }
+
+    function nextImage() {
+      showImage((current + 1) % images.length);
+    }
+
+    function prevImage() {
+      showImage((current - 1 + images.length) % images.length);
+    }
+
+    prevBtn.addEventListener('click', () => { stopAutoSlideTemporary(); prevImage(); });
+    nextBtn.addEventListener('click', () => { stopAutoSlideTemporary(); nextImage(); });
+
+    function startAutoSlide() {
       stopAutoSlide();
-      autoSlideTimer = setInterval(() => {
-        if (!isHovering) nextImage();
-      }, AUTO_SLIDE_INTERVAL);
+      autoSlideTimer = setInterval(nextImage, AUTO_SLIDE_INTERVAL);
     }
-  }
 
-  function stopAutoSlide() {
-    if (autoSlideTimer) {
-      clearInterval(autoSlideTimer);
+    function stopAutoSlide() {
+      if (autoSlideTimer) clearInterval(autoSlideTimer);
       autoSlideTimer = null;
     }
-  }
 
-  function stopAutoSlideTemporary() {
-    stopAutoSlide();
-    setTimeout(startAutoSlide, 8000); // 点击按钮后8秒再恢复自动播放
-  }
-
-  // 鼠标悬停暂停（电脑端）
-  if (imgEl) {
-    imgEl.addEventListener('mouseenter', () => { isHovering = true; });
-    imgEl.addEventListener('mouseleave', () => { isHovering = false; });
-    imgEl.addEventListener('touchstart', () => { isHovering = true; stopAutoSlideTemporary(); });
-    imgEl.addEventListener('touchend', () => { isHovering = false; });
-  }
-
-  // 页面加载时初始化
-  document.addEventListener('DOMContentLoaded', () => {
-    showImage(0);
-    startAutoSlide();
-  });
-
-  // 键盘左右键支持
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowLeft') {
-      stopAutoSlideTemporary();
-      prevImage();
-    } else if (e.key === 'ArrowRight') {
-      stopAutoSlideTemporary();
-      nextImage();
+    function stopAutoSlideTemporary() {
+      stopAutoSlide();
+      setTimeout(startAutoSlide, 7000);
     }
-  });
-</script>
+
+    // 音乐按钮控制
+    musicBtn.addEventListener('click', () => {
+      if (bgm.paused) {
+        bgm.play();
+        musicBtn.classList.add('playing');
+      } else {
+        bgm.pause();
+        musicBtn.classList.remove('playing');
+      }
+    });
+
+    // 点击封面 -> 进入相册
+    startBtn.addEventListener('click', () => {
+      cover.style.display = 'none';
+      slideshowContainer.style.display = 'block';
+      bgm.play();
+      musicBtn.classList.add('playing');
+      showImage(0);
+      startAutoSlide();
+    });
+  </script>
+</body>
+</html>
