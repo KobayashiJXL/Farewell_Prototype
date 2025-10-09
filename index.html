@@ -1,316 +1,223 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mike给大家的信</title>
 
-  <!-- 密码校验（页面内容显示前执行） -->
+  <!-- 密码保护 -->
   <script>
-    (function(){
-      const correct = "Toowong";
-      const input = prompt("请输入访问密码：");
-      // 去掉首尾空白
-      if (!input || input.trim() !== correct) {
-        alert("密码错误，即将跳转到其他网站。");
-        window.location.href = "https://www.jw.org";
-      }
-      // 如果密码正确，继续加载页面
-    })();
+    const password = "Toowong";
+    const userInput = prompt("请输入访问密码：");
+    if (userInput !== password) {
+      alert("密码错误，即将跳转到其他网站。");
+      window.location.href = "https://www.jw.org";
+    }
   </script>
 
-  <!-- 手写中文字体（Google Fonts） -->
-  <link href="https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+HuangYou&family=Pacifico&display=swap" rel="stylesheet">
-
   <style>
-    :root{
-      --accent: #a35c7a;
-      --paper: #fffbea;
-      --paper-border: #d2b48c;
-      --bg: #fdfaf6;
-    }
-    html,body{
-      height:100%;
-      margin:0;
-      font-family:"Noto Serif SC", "ZCOOL QingKe HuangYou", serif;
-      background-color: var(--bg);
-      color:#333;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
+    body {
+      margin: 0;
+      font-family: "ZCOOL QingKe HuangYou", "Pacifico", cursive, serif;
+      background-color: #fdfaf6;
+      color: #444;
+      text-align: center;
+      overflow-x: hidden;
     }
 
-    /* ====== 信纸封面 ====== */
+    /* 封面信纸 */
     #cover {
-      position:fixed;
-      inset:0;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      background: var(--bg);
-      z-index:50;
-      perspective:1200px;
+      position: fixed;
+      inset: 0;
+      background-color: #fdfaf6;
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 40px;
+      border: 6px solid #e5d1b8;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      z-index: 10;
     }
 
-    #letter {
-      width:85%;
-      max-width:760px;
-      background: var(--paper);
-      border: 2px solid var(--paper-border);
-      border-radius:12px;
-      padding:34px 36px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
-      display:flex;
-      flex-direction:column;
-      gap:18px;
-      transform-origin: left center;
-      transition: transform 900ms ease, opacity 900ms ease;
+    #cover-photo {
+      width: 16%; /* 封面照片大小 */
+      border-radius: 8px;
+      margin-left: 20px;
     }
 
-    /* 左上角小照片 */
-    #cover-img {
-      width: 16.66%; /* 1/6 */
-      max-width: 130px;
-      border-radius:8px;
-      border:1px solid var(--paper-border);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-      float:left;
-      margin-right:16px;
-      margin-bottom:8px;
+    #letter-text {
+      flex: 1;
+      text-align: left;
+      font-size: 1.1em;
+      line-height: 1.6em;
     }
 
-    /* 信纸文字（手写风格） */
-    #letter-text{
-      font-family: "ZCOOL QingKe HuangYou", "Pacifico", cursive;
-      font-size:1.15rem;
-      line-height:1.9;
-      color:#3b2f2f;
-      text-align:left;
-      margin:0;
-      padding:0;
-      clear:both;
+    #start-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1em;
+      border: none;
+      border-radius: 6px;
+      background-color: #a35c7a;
+      color: #fff;
+      cursor: pointer;
     }
 
-    /* 回忆按钮 */
-    #start-btn{
-      align-self:flex-start;
-      margin-top:6px;
-      background:var(--accent);
-      color:#fff;
-      border:none;
-      padding:10px 18px;
-      border-radius:8px;
-      cursor:pointer;
-      font-size:1rem;
-      transition:background 200ms ease, transform 120ms ease;
-    }
-    #start-btn:active{ transform:translateY(1px); }
-    #start-btn:hover{ background:#b36b8a; }
-
-    /* ====== 音乐按钮 ====== */
-    #music-btn{
-      position:fixed;
-      top:18px;
-      right:18px;
-      width:50px;
-      height:50px;
-      border-radius:50%;
-      background:#fff;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      box-shadow:0 6px 18px rgba(0,0,0,0.15);
-      cursor:pointer;
-      z-index:80;
-    }
-    #music-btn.playing{ animation:spin 3s linear infinite; }
-    @keyframes spin{ from{transform:rotate(0)} to{transform:rotate(360deg)} }
-    #music-btn::before{ content:"🎵"; font-size:22px; }
-
-    /* ====== 相册容器 ====== */
-    #slideshow-wrap{
-      display:none;
-      position:fixed;
-      inset:0;
-      background:#000;
-      z-index:10;
-      align-items:center;
-      justify-content:center;
-      overflow:hidden;
+    #start-btn:hover {
+      background-color: #c17696;
     }
 
-    #slideshow{
-      max-width:100%;
-      max-height:100%;
-      object-fit:contain;
-      transition:opacity 450ms ease;
-      position:relative;
-      top:50%;
-      left:50%;
-      transform:translate(-50%,-50%);
+    /* 相册 */
+    #album {
+      display: none;
+      padding: 20px;
+      text-align: center;
     }
 
-    .nav-btn{
-      position:fixed;
-      top:50%;
-      transform:translateY(-50%);
-      background:rgba(255,255,255,0.25);
-      border:none;
-      color:#fff;
-      font-size:2rem;
-      padding:8px 14px;
-      border-radius:8px;
-      cursor:pointer;
-      z-index:90;
-      user-select:none;
+    #album img {
+      width: 90%;
+      max-width: 800px;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
-    #prev-btn{ left:18px; }
-    #next-btn{ right:18px; }
-    .nav-btn:hover{ background:rgba(255,255,255,0.5); }
 
-    /* 响应调整：信纸在窄屏时布局更友好 */
-    @media (max-width:720px){
-      #cover-img{ width:24%; max-width:120px; margin-right:12px; }
-      #letter{ padding:22px; width:92%; }
-      #letter-text{ font-size:1rem; line-height:1.7; }
+    .nav-btn {
+      margin: 20px 10px 0 10px;
+      padding: 10px 20px;
+      font-size: 1em;
+      border: none;
+      border-radius: 6px;
+      background-color: #a35c7a;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .nav-btn:hover {
+      background-color: #c17696;
+    }
+
+    /* 音乐按钮 */
+    #music-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: #fff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+
+    #music-btn.playing {
+      animation: spin 3s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    #music-btn::before {
+      content: "🎵";
+      font-size: 24px;
     }
   </style>
 </head>
+
 <body>
-  <!-- 音乐控制按钮 -->
-  <div id="music-btn" title="播放 / 暂停音乐"></div>
+  <!-- 封面信纸 -->
+  <div id="cover">
+    <div id="letter-text">
+      <p>亲爱的朋友，你好👋！</p>
+      <p>我在这里感谢耶和华上帝给我这个机会和殊荣与你一起侍奉他。</p>
+      <p>虽然相处的时光短暂，但是无论是欢笑还是泪水，都让我倍加珍惜。</p>
+      <p>这是一封给你的感谢信，感谢你对我付出的基督徒爱心，我因为你的爱心和信心都学到很多。</p>
+      <p>的确离别让人难过。但我们因侍奉耶和华而有机会相遇，不可能说谎的上帝也赐给我们美好的希望，让我们在不久的将来永远享受生命。</p>
+      <p>不如我们现在满怀希望展望未来，在各自的服务岗位上满腔热诚得为耶和华竭力效劳。</p>
+      <p>因为在主那里的辛劳永远不会白费，我们也会在不久的将来再次相遇，并永远在乐园里欢聚。</p>
+      <p>现在请接受我最真诚的祝福，我也会不断为你祷告。感激你为我做的一切，也希望在不久的将来为你成就感到由衷的自豪。</p>
+      <p style="text-align:right; margin-top:24px;">你的弟兄，朋友以及家人。<br>Mike 蒋小霖</p>
+      <button id="start-btn">打开音乐相册</button>
+    </div>
+    <img id="cover-photo" src="cover.jpg" alt="封面照片">
+  </div>
 
-  <!-- 封面（信纸） -->
-  <div id="cover" aria-hidden="false">
-    <div id="letter" role="region" aria-label="封面信纸">
-      <img id="cover-img" src="cover.jpg" alt="封面照片">
-      <div id="letter-text">
-        <p>亲爱的朋友们：</p>
-        <p>感谢你们一路的陪伴与温暖。每一张照片都是一扇小窗，透过它，我看见了过去那些温柔的时光。</p>
-        <p>如果你愿意，请按下「回忆」，让音乐响起，我们一起翻开这些画面。</p>
-      </div>
-
-      <button id="start-btn" aria-label="打开回忆">回忆</button>
+  <!-- 相册 -->
+  <div id="album">
+    <img id="album-img" src="1.jpg" alt="相册照片">
+    <div>
+      <button class="nav-btn" id="prev-btn">上一张</button>
+      <button class="nav-btn" id="next-btn">下一张</button>
     </div>
   </div>
 
-  <!-- 相册显示层 -->
-  <div id="slideshow-wrap" aria-hidden="true">
-    <img id="slideshow" src="1.jpg" alt="相册照片">
-    <button class="nav-btn" id="prev-btn" aria-label="上一张">❮</button>
-    <button class="nav-btn" id="next-btn" aria-label="下一张">❯</button>
-  </div>
-
-  <!-- 音频（请确保 365.mp3 在根目录） -->
-  <audio id="bgm" loop preload="auto">
+  <!-- 背景音乐 -->
+  <audio id="bgm" loop>
     <source src="365.mp3" type="audio/mp3">
-    您的浏览器不支持音频播放。
+    您的浏览器不支持音频播放
   </audio>
 
-  <!-- 主脚本 -->
+  <!-- 音乐按钮 -->
+  <div id="music-btn"></div>
+
   <script>
-    // 元素
-    const musicBtn = document.getElementById('music-btn');
-    const bgm = document.getElementById('bgm');
-    const cover = document.getElementById('cover');
-    const letter = document.getElementById('letter');
     const startBtn = document.getElementById('start-btn');
-    const slideshowWrap = document.getElementById('slideshow-wrap');
-    const imgEl = document.getElementById('slideshow');
+    const cover = document.getElementById('cover');
+    const album = document.getElementById('album');
+    const albumImg = document.getElementById('album-img');
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
 
-    // 图片数组 1.jpg ~ 59.jpg（若放在 images/ 文件夹，请在路径前加 'images/'）
-    const TOTAL = 59;
-    const images = Array.from({length: TOTAL}, (_,i) => `${i+1}.jpg`);
+    const btn = document.getElementById('music-btn');
+    const bgm = document.getElementById('bgm');
 
-    // 轮播设置
-    let current = 0;
-    const AUTO_MS = 15000; // 自动轮播间隔
-    let autoTimer = null;
-    let isHover = false;
-
-    function showImage(index){
-      index = (index + images.length) % images.length;
-      current = index;
-      imgEl.style.opacity = 0;
-      setTimeout(() => {
-        imgEl.src = images[current];
-        imgEl.style.opacity = 1;
-      }, 200);
-      // 预加载下一张
-      const nextIdx = (current + 1) % images.length;
-      const p = new Image(); p.src = images[nextIdx];
-    }
-
-    function nextImage(){ showImage((current + 1) % images.length); }
-    function prevImage(){ showImage((current - 1 + images.length) % images.length); }
-
-    prevBtn.addEventListener('click', ()=>{
-      stopAutoTemp();
-      prevImage();
-    });
-    nextBtn.addEventListener('click', ()=>{
-      stopAutoTemp();
-      nextImage();
-    });
-
-    // 音乐按钮
-    musicBtn.addEventListener('click', ()=>{
+    // 音乐按钮控制
+    btn.addEventListener('click', () => {
       if (bgm.paused) {
-        bgm.play().catch(()=>{}); // 捕获被浏览器阻止的异常
-        musicBtn.classList.add('playing');
+        bgm.play();
+        btn.classList.add('playing');
       } else {
         bgm.pause();
-        musicBtn.classList.remove('playing');
+        btn.classList.remove('playing');
       }
     });
 
-    // 点击回忆：翻书动画 -> 显示相册 -> 播放音乐 -> 开始自动轮播
-    startBtn.addEventListener('click', ()=>{
-      // 翻页效果（Y轴旋转 + 透明度）
-      letter.style.transform = "rotateY(-90deg) translateX(-20px)";
-      letter.style.opacity = 0;
-      setTimeout(()=>{
-        cover.style.display = "none";
-        slideshowWrap.style.display = "flex";
-        slideshowWrap.style.alignItems = "center";
-        slideshowWrap.style.justifyContent = "center";
-        slideshowWrap.setAttribute('aria-hidden','false');
-        showImage(0);
-        // 尝试播放音乐
-        bgm.play().then(()=> musicBtn.classList.add('playing')).catch(()=>{});
-        startAuto();
-      }, 900);
+    // 点击回忆按钮，隐藏封面显示相册并播放音乐
+    startBtn.addEventListener('click', () => {
+      cover.style.display = 'none';
+      album.style.display = 'block';
+      if (bgm.paused) {
+        bgm.play();
+        btn.classList.add('playing');
+      }
     });
 
-    // 自动轮播
-    function startAuto(){
-      stopAuto();
-      autoTimer = setInterval(()=>{ if(!isHover) nextImage(); }, AUTO_MS);
-    }
-    function stopAuto(){ if (autoTimer) { clearInterval(autoTimer); autoTimer = null; } }
-    function stopAutoTemp(){
-      stopAuto();
-      setTimeout(startAuto, 7000);
+    // 相册切换
+    let currentIndex = 1;
+    const totalPhotos = 59;
+
+    function showPhoto(index) {
+      albumImg.src = index + ".jpg";
     }
 
-    // 鼠标/触摸交互暂停自动
-    imgEl.addEventListener('mouseenter', ()=> isHover = true);
-    imgEl.addEventListener('mouseleave', ()=> isHover = false);
-    imgEl.addEventListener('touchstart', ()=> { isHover = true; stopAutoTemp(); });
-    imgEl.addEventListener('touchend', ()=> isHover = false);
-
-    // 键盘控制
-    document.addEventListener('keydown', (e)=>{
-      if (e.key === 'ArrowLeft') { stopAutoTemp(); prevImage(); }
-      if (e.key === 'ArrowRight') { stopAutoTemp(); nextImage(); }
+    prevBtn.addEventListener('click', () => {
+      currentIndex--;
+      if (currentIndex < 1) currentIndex = totalPhotos;
+      showPhoto(currentIndex);
     });
 
-    // 页面可见时预加载第一张
-    document.addEventListener('DOMContentLoaded', ()=>{
-      // 预加载第一张和第二张
-      const p1 = new Image(); p1.src = images[0];
-      const p2 = new Image(); p2.src = images[1 % images.length];
+    nextBtn.addEventListener('click', () => {
+      currentIndex++;
+      if (currentIndex > totalPhotos) currentIndex = 1;
+      showPhoto(currentIndex);
     });
   </script>
 </body>
