@@ -40,27 +40,24 @@
       z-index: 10;
     }
 
-    #cover-photo {
-      width: 16%; /* 封面照片大小 */
-      border-radius: 8px;
+    #cover-photo-container {
+      position: relative;
+      width: 16%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       margin-left: 20px;
     }
 
-    #letter-text {
-      flex: 1;
-      text-align: left;
-      font-size: 1.1em;
-      line-height: 1.6em;
+    #cover-photo {
+      width: 100%;
+      border-radius: 8px;
     }
 
-    /* 回忆按钮固定在封面底部 */
     #start-btn {
-      position: absolute;
-      bottom: 40px;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 10px 20px;
-      font-size: 1em;
+      margin-top: 12px;
+      padding: 8px 16px;
+      font-size: 0.9em;
       border: none;
       border-radius: 6px;
       background-color: #a35c7a;
@@ -71,6 +68,13 @@
 
     #start-btn:hover {
       background-color: #c17696;
+    }
+
+    #letter-text {
+      flex: 1;
+      text-align: left;
+      font-size: 1.1em;
+      line-height: 1.6em;
     }
 
     /* 相册 */
@@ -150,9 +154,13 @@
       <p>因为在主那里的辛劳永远不会白费，我们也会在不久的将来再次相遇，并永远在乐园里欢聚。</p>
       <p>现在请接受我最真诚的祝福，我也会不断为你祷告。感激你为我做的一切，也希望在不久的将来为你成就感到由衷的自豪。</p>
       <p style="text-align:right; margin-top:24px;">你的弟兄，朋友以及家人。<br>Mike 蒋小霖</p>
-      <button id="start-btn">回忆</button>
     </div>
-    <img id="cover-photo" src="cover.jpg" alt="封面照片">
+
+    <!-- 照片 + 打开音乐相册按钮 -->
+    <div id="cover-photo-container">
+      <img id="cover-photo" src="cover.jpg" alt="封面照片">
+      <button id="start-btn">打开音乐相册</button>
+    </div>
   </div>
 
   <!-- 相册 -->
@@ -195,7 +203,7 @@
       }
     });
 
-    // 点击回忆按钮，隐藏封面显示相册并播放音乐
+    // 点击按钮，隐藏封面显示相册并播放音乐
     startBtn.addEventListener('click', () => {
       cover.style.display = 'none';
       album.style.display = 'block';
@@ -203,6 +211,7 @@
         bgm.play();
         btn.classList.add('playing');
       }
+      startAutoFlip();
     });
 
     // 相册切换
@@ -224,6 +233,21 @@
       if (currentIndex > totalPhotos) currentIndex = 1;
       showPhoto(currentIndex);
     });
+
+    // 自动翻页，每15秒翻下一张
+    let autoFlipInterval;
+    function startAutoFlip() {
+      autoFlipInterval = setInterval(() => {
+        currentIndex++;
+        if (currentIndex > totalPhotos) currentIndex = 1;
+        showPhoto(currentIndex);
+      }, 15000); // 15000毫秒 = 15秒
+    }
+
+    // 停止自动翻页（可选）
+    function stopAutoFlip() {
+      clearInterval(autoFlipInterval);
+    }
   </script>
 </body>
 </html>
