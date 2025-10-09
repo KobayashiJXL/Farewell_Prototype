@@ -5,257 +5,171 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mike给大家的信</title>
 
-  <!-- 密码保护 -->
-  <script>
-    const password = "Toowong";
-    const userInput = prompt("请输入访问密码：");
-    if (userInput !== password) {
-      alert("密码错误，即将跳转到其他网站。");
-      window.location.href = "https://www.jw.org";
-    }
-  </script>
-
   <style>
     body {
       margin: 0;
-      font-family: "ZCOOL QingKe HuangYou", "Pacifico", cursive, serif;
+      font-family: "Noto Serif SC", "KaiTi", cursive;
       background-color: #fdfaf6;
       color: #444;
       text-align: center;
-      overflow-x: hidden;
+      overflow: hidden;
     }
 
-    /* 封面信纸 */
+    /* === 封面信纸 === */
     #cover {
       position: fixed;
       inset: 0;
       background-color: #fdfaf6;
       display: flex;
-      flex-direction: row;
-      align-items: flex-start;
-      justify-content: space-between;
-      padding: 40px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       border: 6px solid #e5d1b8;
       box-shadow: 0 0 20px rgba(0,0,0,0.1);
       z-index: 10;
+      padding: 20px;
+      box-sizing: border-box;
     }
 
-    #cover-photo-container {
-      position: relative;
-      width: 16%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-left: 20px;
-    }
-
-    #cover-photo {
-      width: 100%;
+    #cover img {
+      width: 15%;
       border-radius: 8px;
+      margin-bottom: 20px;
+      align-self: flex-start;
     }
 
-    #start-btn {
-      margin-top: 12px;
-      padding: 8px 16px;
-      font-size: 0.9em;
-      border: none;
-      border-radius: 6px;
-      background-color: #a35c7a;
-      color: #fff;
-      cursor: pointer;
-      z-index: 20;
-    }
-
-    #start-btn:hover {
-      background-color: #c17696;
-    }
-
-    #letter-text {
-      flex: 1;
+    #letter {
+      max-width: 90%;
+      font-size: 1rem;
+      line-height: 1.8;
       text-align: left;
-      font-size: 1.1em;
-      line-height: 1.6em;
+      white-space: pre-line;
+      font-family: "Noto Serif SC", "KaiTi", cursive;
+      overflow-y: auto;
     }
 
-    /* 相册 */
+    #openAlbum {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background-color: #d8b98f;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-family: "Noto Serif SC", "KaiTi", cursive;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+      z-index: 11;
+    }
+
+    #openAlbum:hover {
+      background-color: #c49a6c;
+      transform: scale(1.05);
+    }
+
+    /* === 相册 === */
     #album {
       display: none;
-      padding: 20px;
+      position: fixed;
+      inset: 0;
+      background-color: black;
+      color: white;
       text-align: center;
     }
 
     #album img {
-      width: 90%;
-      max-width: 800px;
-      max-height: 80vh;
+      max-width: 100%;
+      max-height: 100vh;
       object-fit: contain;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
 
-    .nav-btn {
-      margin: 20px 10px 0 10px;
-      padding: 10px 20px;
-      font-size: 1em;
-      border: none;
-      border-radius: 6px;
-      background-color: #a35c7a;
-      color: #fff;
-      cursor: pointer;
+    /* === 动画效果 === */
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
     }
 
-    .nav-btn:hover {
-      background-color: #c17696;
+    #cover, #album {
+      animation: fadeIn 1.5s ease-in-out;
     }
 
-    /* 音乐按钮 */
-    #music-btn {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background-color: #fff;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      cursor: pointer;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 100;
-    }
-
-    #music-btn.playing {
-      animation: spin 3s linear infinite;
-    }
-
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    #music-btn::before {
-      content: "🎵";
-      font-size: 24px;
-    }
-
-    /* 手机端自适应封面文字 */
+    /* 手机端适配 */
     @media (max-width: 768px) {
-      #cover {
-        flex-direction: column;
-        align-items: center;
-        padding: 20px;
+      #cover img {
+        width: 30%;
+        margin-bottom: 10px;
       }
-      #cover-photo-container {
-        width: 40%;
-        margin-left: 0;
-        margin-top: 20px;
+      #letter {
+        font-size: 0.95rem;
+        line-height: 1.6;
       }
-      #letter-text {
-        font-size: 1em;
+      #openAlbum {
+        font-size: 0.9rem;
+        padding: 10px 20px;
       }
     }
   </style>
 </head>
 
 <body>
-  <!-- 封面信纸 -->
+  <!-- 封面信 -->
   <div id="cover">
-    <div id="letter-text">
-      <p>亲爱的朋友，你好👋！</p>
-      <p>我在这里感谢耶和华上帝给我这个机会和殊荣与你一起侍奉他。</p>
-      <p>虽然相处的时光短暂，但是无论是欢笑还是泪水，都让我倍加珍惜。</p>
-      <p>这是一封给你的感谢信，感谢你对我付出的基督徒爱心，我因为你的爱心和信心都学到很多。</p>
-      <p>的确离别让人难过。但我们因侍奉耶和华而有机会相遇，不可能说谎的上帝也赐给我们美好的希望，让我们在不久的将来永远享受生命。</p>
-      <p>不如我们现在满怀希望展望未来，在各自的服务岗位上满腔热诚得为耶和华竭力效劳。</p>
-      <p>因为在主那里的辛劳永远不会白费，我们也会在不久的将来再次相遇，并永远在乐园里欢聚。</p>
-      <p>现在请接受我最真诚的祝福，我也会不断为你祷告。感激你为我做的一切，也希望在不久的将来为你成就感到由衷的自豪。</p>
-      <p style="text-align:right; margin-top:24px;">你的弟兄，朋友以及家人。<br>Mike 蒋小霖</p>
-    </div>
+    <img src="cover.jpg" alt="封面照片">
+    <div id="letter">
+亲爱的朋友，你好👋！
 
-    <!-- 照片 + 打开音乐相册按钮 -->
-    <div id="cover-photo-container">
-      <img id="cover-photo" src="cover.jpg" alt="封面照片">
-      <button id="start-btn">打开音乐相册</button>
+我在这里感谢耶和华上帝给我这个机会和殊荣与你一起侍奉他。
+虽然相处的时光短暂，但是无论是欢笑还是泪水，都让我倍加珍惜。
+这是一封给你的感谢信，感谢你对我付出的基督徒爱心，我因为你的爱心和信心都学到很多。
+的确离别让人难过。
+但我们因侍奉耶和华而有机会相遇，不可能说谎的上帝也赐给我们美好的希望，
+让我们在不久的将来永远享受生命。
+
+不如我们现在满怀希望展望未来，在各自的服务岗位上满腔热诚得为耶和华竭力效劳。
+因为在主那里的辛劳永远不会白费，我们也会在不久的将来再次相遇，并永远在乐园里欢聚。
+
+现在请接受我最真诚的祝福，我也会不断为你祷告。
+感激你为我做的一切，也希望在不久的将来为你成就感到由衷的自豪。
+
+你的弟兄、朋友以及家人。  
+Mike 蒋小霖
     </div>
   </div>
 
-  <!-- 相册 -->
+  <!-- 打开相册按钮 -->
+  <button id="openAlbum">打开音乐相册</button>
+
+  <!-- 相册部分 -->
   <div id="album">
-    <img id="album-img" src="1.jpg" alt="相册照片">
-    <div>
-      <button class="nav-btn" id="prev-btn">上一张</button>
-      <button class="nav-btn" id="next-btn">下一张</button>
-    </div>
+    <img id="photo" src="1.jpg" alt="相册照片">
+    <audio id="bgm" src="music.mp3" loop></audio>
   </div>
-
-  <!-- 背景音乐 -->
-  <audio id="bgm" loop>
-    <source src="365.mp3" type="audio/mp3">
-    您的浏览器不支持音频播放
-  </audio>
-
-  <!-- 音乐按钮 -->
-  <div id="music-btn"></div>
 
   <script>
-    const startBtn = document.getElementById('start-btn');
+    const openAlbum = document.getElementById('openAlbum');
     const cover = document.getElementById('cover');
     const album = document.getElementById('album');
-    const albumImg = document.getElementById('album-img');
-    const prevBtn = document.getElementById('prev-btn');
-    const nextBtn = document.getElementById('next-btn');
-
-    const btn = document.getElementById('music-btn');
+    const photo = document.getElementById('photo');
     const bgm = document.getElementById('bgm');
 
-    // 音乐按钮控制
-    btn.addEventListener('click', () => {
-      if (bgm.paused) {
-        bgm.play();
-        btn.classList.add('playing');
-      } else {
-        bgm.pause();
-        btn.classList.remove('playing');
-      }
-    });
-
-    // 点击按钮，隐藏封面显示相册并播放音乐
-    startBtn.addEventListener('click', () => {
-      cover.style.display = 'none';
-      album.style.display = 'block';
-      if (bgm.paused) {
-        bgm.play();
-        btn.classList.add('playing');
-      }
-    });
-
-    // 相册切换
-    let currentIndex = 1;
+    let currentPhoto = 1;
     const totalPhotos = 59;
 
-    function showPhoto(index) {
-      albumImg.src = index + ".jpg";
-    }
+    openAlbum.addEventListener('click', () => {
+      cover.style.display = 'none';
+      album.style.display = 'block';
+      bgm.play();
 
-    prevBtn.addEventListener('click', () => {
-      currentIndex--;
-      if (currentIndex < 1) currentIndex = totalPhotos;
-      showPhoto(currentIndex);
+      // 自动翻页
+      setInterval(() => {
+        currentPhoto++;
+        if (currentPhoto > totalPhotos) currentPhoto = 1;
+        photo.src = `${currentPhoto}.jpg`;
+      }, 15000); // 15秒
     });
-
-    nextBtn.addEventListener('click', () => {
-      currentIndex++;
-      if (currentIndex > totalPhotos) currentIndex = 1;
-      showPhoto(currentIndex);
-    });
-
-    // 🚀 自动翻页，每15秒切换下一张
-    setInterval(() => {
-      currentIndex++;
-      if (currentIndex > totalPhotos) currentIndex = 1;
-      showPhoto(currentIndex);
-    }, 15000); // 15000毫秒 = 15秒
   </script>
 </body>
 </html>
