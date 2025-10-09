@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mike给大家的信</title>
+  <title>离别相册</title>
 
   <!-- 密码保护 -->
   <script>
@@ -38,6 +38,13 @@
       border: 6px solid #e5d1b8;
       box-shadow: 0 0 20px rgba(0,0,0,0.1);
       z-index: 10;
+      transition: transform 1s ease, opacity 1s ease;
+      transform-origin: left center;
+    }
+
+    #cover.hide {
+      transform: rotateY(90deg) translateX(100%);
+      opacity: 0;
     }
 
     #cover-photo-container {
@@ -75,6 +82,8 @@
       text-align: left;
       font-size: 1.1em;
       line-height: 1.6em;
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
     /* 相册 */
@@ -84,13 +93,19 @@
       text-align: center;
     }
 
-    #album img {
+    #album-img {
       width: 90%;
       max-width: 800px;
       max-height: 80vh;
       object-fit: contain;
       border-radius: 12px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+
+    #album-img.show {
+      opacity: 1;
     }
 
     .nav-btn {
@@ -137,6 +152,27 @@
     #music-btn::before {
       content: "🎵";
       font-size: 24px;
+    }
+
+    /* 手机端封面文字自适应 */
+    @media (max-width: 768px) {
+      #cover {
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 20px;
+      }
+
+      #cover-photo-container {
+        width: 40%;
+        margin: 20px 0;
+      }
+
+      #letter-text {
+        width: 90%;
+        text-align: center;
+        font-size: 1em;
+      }
     }
   </style>
 </head>
@@ -203,23 +239,16 @@
       }
     });
 
-    // 点击按钮，隐藏封面显示相册并播放音乐
-    startBtn.addEventListener('click', () => {
-      cover.style.display = 'none';
-      album.style.display = 'block';
-      if (bgm.paused) {
-        bgm.play();
-        btn.classList.add('playing');
-      }
-      startAutoFlip();
-    });
-
-    // 相册切换
+    // 相册数据
     let currentIndex = 1;
     const totalPhotos = 59;
 
     function showPhoto(index) {
-      albumImg.src = index + ".jpg";
+      albumImg.classList.remove('show');
+      setTimeout(() => {
+        albumImg.src = index + ".jpg";
+        albumImg.classList.add('show');
+      }, 200); // 200ms延迟实现淡入效果
     }
 
     prevBtn.addEventListener('click', () => {
@@ -234,20 +263,29 @@
       showPhoto(currentIndex);
     });
 
-    // 自动翻页，每15秒翻下一张
+    // 自动翻页
     let autoFlipInterval;
     function startAutoFlip() {
       autoFlipInterval = setInterval(() => {
         currentIndex++;
         if (currentIndex > totalPhotos) currentIndex = 1;
         showPhoto(currentIndex);
-      }, 15000); // 15000毫秒 = 15秒
+      }, 15000); // 15秒
     }
 
-    // 停止自动翻页（可选）
-    function stopAutoFlip() {
-      clearInterval(autoFlipInterval);
-    }
+    // 点击按钮，封面翻开显示相册
+    startBtn.addEventListener('click', () => {
+      cover.classList.add('hide');
+      setTimeout(() => {
+        cover.style.display = 'none';
+        album.style.display = 'block';
+        if (bgm.paused) {
+          bgm.play();
+          btn.classList.add('playing');
+        }
+        startAutoFlip();
+      }, 1000); // 动画1秒
+    });
   </script>
 </body>
 </html>
