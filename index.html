@@ -3,18 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>希望重逢</title>
+  <title>离别相册</title>
 
-  <!DOCTYPE html>
-<script>
-  const password = "Toowong";
-  const userInput = prompt("请输入访问密码：");
-  if (userInput !== password) {
-    alert("密码错误，无法访问网站。");
-    document.body.innerHTML = "<h2>访问被拒绝</h2>";
-  }
-</script>
-<html lang="zh">
+  <script>
+    // 🔐 设置访问密码
+    const password = "farewell2025";
+    const userInput = prompt("请输入访问密码：");
+
+    if (userInput !== password) {
+      alert("密码错误，即将跳转到其他网站。");
+      window.location.href = "https://www.jw.org";
+    }
+  </script>
+</head>
+  
 <head>
   <meta c
   <style>
