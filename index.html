@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>离别相册</title>
+  <title>Mike给大家的信</title>
 
   <!-- 密码保护 -->
   <script>
@@ -75,8 +75,6 @@
       text-align: left;
       font-size: 1.1em;
       line-height: 1.6em;
-      max-height: 90vh;
-      overflow-y: auto;
     }
 
     /* 相册 */
@@ -141,23 +139,19 @@
       font-size: 24px;
     }
 
-    /* 手机端封面文字自适应 */
+    /* 手机端自适应封面文字 */
     @media (max-width: 768px) {
       #cover {
         flex-direction: column;
         align-items: center;
-        justify-content: flex-start;
         padding: 20px;
       }
-
       #cover-photo-container {
         width: 40%;
-        margin: 20px 0;
+        margin-left: 0;
+        margin-top: 20px;
       }
-
       #letter-text {
-        width: 90%;
-        text-align: center;
         font-size: 1em;
       }
     }
@@ -255,6 +249,13 @@
       if (currentIndex > totalPhotos) currentIndex = 1;
       showPhoto(currentIndex);
     });
+
+    // 🚀 自动翻页，每15秒切换下一张
+    setInterval(() => {
+      currentIndex++;
+      if (currentIndex > totalPhotos) currentIndex = 1;
+      showPhoto(currentIndex);
+    }, 15000); // 15000毫秒 = 15秒
   </script>
 </body>
 </html>
